@@ -22,7 +22,7 @@ pipeline {
 
           
           openshift.withCluster() { 
-              openshift.withProject("swapnaramesh-dev") {
+              openshift.withProject("swapnaramesh-stage") {
   
                     def buildConfigExists = openshift.selector("bc", "jenkins-to-openshift").exists() 
     
@@ -42,7 +42,7 @@ pipeline {
 
           
           openshift.withCluster() { 
-              openshift.withProject("swapnaramesh-dev") { 
+              openshift.withProject("swapnaramesh-stage") { 
                              def deployment = openshift.selector("dc", "jenkins-to-openshift") 
 
                             if(!deployment.exists()){ 
