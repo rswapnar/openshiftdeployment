@@ -24,13 +24,13 @@ pipeline {
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-stage") {
   
-                    def buildConfigExists = openshift.selector("bc", "jenkins-to-openshift").exists() 
+                    def buildConfigExists = openshift.selector("bc", "jenkinsdeploy").exists() 
     
                     if(!buildConfigExists){ 
-                      openshift.newBuild("--name=jenkins-to-openshift-deploy", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
+                      openshift.newBuild("--name=jenkinsdeploy", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
                      } 
     
-                    openshift.selector("bc", "jenkins-to-openshift").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
+                    openshift.selector("bc", "jenkinsdeploy").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
 
           }
       }
@@ -43,14 +43,14 @@ pipeline {
           
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-stage") { 
-                             def deployment = openshift.selector("dc", "jenkins-to-openshift") 
+                             def deployment = openshift.selector("dc", "jenkinsdeploy") 
 
                             if(!deployment.exists()){ 
-                              openshift.newApp('jenkins-to-openshift', "--as-deployment-config").narrow('svc').expose() 
+                              openshift.newApp('jenkinsdeploy', "--as-deployment-config").narrow('svc').expose() 
                             } 
 
                             timeout(5) { 
-                              openshift.selector("dc", "jenkins-to-openshift").related('pods').untilEach(1) { 
+                              openshift.selector("dc", "jenkinsdeploy").related('pods').untilEach(1) { 
                                 return (it.object().status.phase == "Running") 
       } 
     } 
