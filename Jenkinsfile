@@ -11,7 +11,6 @@ pipeline {
       steps {
         echo 'Building..'
         
-        // Add steps here
         sh 'mvn clean package'
       }
     }
@@ -21,17 +20,17 @@ pipeline {
         
         script {
 
-          // Add steps here
+          
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-dev") {
   
-                    def buildConfigExists = openshift.selector("bc", "codelikethewind").exists() 
+                    def buildConfigExists = openshift.selector("bc", "jenkins-to-openshift").exists() 
     
                     if(!buildConfigExists){ 
-                      openshift.newBuild("--name=codelikethewind", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
+                      openshift.newBuild("--name=jenkins-to-openshift", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
                      } 
     
-                    openshift.selector("bc", "codelikethewind").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
+                    openshift.selector("bc", "jenkins-to-openshift").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
 
           }
       }
@@ -41,17 +40,17 @@ pipeline {
         echo 'Deploying....'
         script {
 
-          // Add steps here
+          
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-dev") { 
-                             def deployment = openshift.selector("dc", "codelikethewind") 
+                             def deployment = openshift.selector("dc", "jenkins-to-openshift") 
 
                             if(!deployment.exists()){ 
-                              openshift.newApp('codelikethewind', "--as-deployment-config").narrow('svc').expose() 
+                              openshift.newApp('jenkins-to-openshift', "--as-deployment-config").narrow('svc').expose() 
                             } 
 
                             timeout(5) { 
-                              openshift.selector("dc", "codelikethewind").related('pods').untilEach(1) { 
+                              openshift.selector("dc", "jenkins-to-openshift").related('pods').untilEach(1) { 
                                 return (it.object().status.phase == "Running") 
       } 
     } 
