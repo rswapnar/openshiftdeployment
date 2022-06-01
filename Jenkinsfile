@@ -45,14 +45,14 @@ pipeline {
           
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-dev") { 
-                             def deployment = openshift.selector("dc", "codelikethewind") 
+                             def deployment = openshift.selector("dc", "testcodelikethewind") 
 
                             if(!deployment.exists()){ 
-                              openshift.newApp('codelikethewind', "--as-deployment-config").narrow('svc').expose() 
+                              openshift.newApp('testcodelikethewind', "--as-deployment-config").narrow('svc').expose() 
                             } 
 
                             timeout(5) { 
-                              openshift.selector("dc", "codelikethewind").related('pods').untilEach(1) { 
+                              openshift.selector("dc", "testcodelikethewind").related('pods').untilEach(1) { 
                                 return (it.object().status.phase == "Running") 
       } 
     } 
