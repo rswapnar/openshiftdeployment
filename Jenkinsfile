@@ -24,15 +24,15 @@ pipeline {
           openshift.withCluster() { 
               openshift.withProject("swapnaramesh-dev") {
   
-                    def buildConfigExists = openshift.selector("bc", "codelikethewind").exists() 
+                    def buildConfigExists = openshift.selector("bc", "testcodelikethewind").exists() 
     
                     if(!buildConfigExists){ 
-                      //openshift.newBuild("--name=codelikethewind", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
-                      openshift.newBuild("--name=codelikethewind", "--docker-image= redhat-openjdk18-openshift", "--binary") 
+                      //openshift.newBuild("--name=testcodelikethewind", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
+                      openshift.newBuild("--name=testcodelikethewind", "--docker-image= redhat-openjdk18-openshift", "--binary") 
                      
                      } 
     
-                    openshift.selector("bc", "codelikethewind").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
+                    openshift.selector("bc", "testcodelikethewind").startBuild("--from-file=target/simple-servlet-0.0.1-SNAPSHOT.war", "--follow") } }
 
           }
       }
